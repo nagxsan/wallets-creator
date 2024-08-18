@@ -77,6 +77,9 @@ const config = {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
     },
+    screens: {
+      "xsm": "500px"
+    }
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config
