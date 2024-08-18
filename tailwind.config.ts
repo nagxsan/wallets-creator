@@ -78,7 +78,9 @@ const config = {
       },
     },
     screens: {
-      "xsm": "500px"
+      "xsm": "500px",
+      "sm": '640px',
+      "md": '768px',
     }
   },
   plugins: [require("tailwindcss-animate")],

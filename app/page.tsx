@@ -2,6 +2,7 @@
 
 import { Mnemonics } from "@/components/mnemonics";
 import { Navbar } from "@/components/navbar";
+import { Toaster } from "@/components/ui/sonner";
 import { RecoilRoot } from "recoil";
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
       <RecoilRoot>
         <Navbar />
         <Mnemonics />
+        <Toaster />
       </RecoilRoot>
     </main>
   )
