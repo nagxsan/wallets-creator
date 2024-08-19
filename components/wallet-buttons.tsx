@@ -13,12 +13,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { SetterOrUpdater, useRecoilState, useRecoilValue } from "recoil";
 import { walletsAtom } from "@/store/atoms/wallets";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BlockchainType } from "@/constants/enums";
 import { btcWalletsCountAtom, ethWalletsCountAtom, solWalletsCountAtom } from "@/store/atoms/wallets-count";
 import { mnemonicsAtom } from "@/store/atoms/mnemonics";
 import { toast } from "sonner";
 import { generateWallet } from "@/lib/generate-wallet";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 
 export function WalletButtons() {
 
@@ -66,16 +67,28 @@ export function WalletButtons() {
     const setCountFn = blockchainTypeToSetWalletsCountFn.get(selectedType)
     const derivationPath = getDerivationPath(selectedType, count ?? 0)
 
-    console.log(derivationPath)
-
     if (setCountFn && derivationPath) {
-      setWallets((wallets) => [...wallets, generateWallet(mnemonics, derivationPath, selectedType)])
+      const updatedWallets = [...wallets, generateWallet(mnemonics, derivationPath, selectedType)]
+      localStorage.setItem('wallets', JSON.stringify(updatedWallets))
+      setWallets(updatedWallets)
       setCountFn((count) => count + 1)
     } else {
       toast('Wallet addition unsuccessful')
     }
     setBlockChainType(selectedType)
   }
+
+  const handleDeleteAllWallets = () => {
+    localStorage.setItem('wallets', '')
+    setWallets([])
+  }
+
+  useEffect(() => {
+    const storedWallets = localStorage.getItem('wallets')
+    if (storedWallets && storedWallets !== '') {
+      setWallets(JSON.parse(storedWallets))
+    }
+  }, [])
 
   return (
     <div className="flex items-center gap-x-4">
@@ -93,13 +106,38 @@ export function WalletButtons() {
           </DropdownMenuRadioGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Button
-        size={screenSize.width > 500 || screenSize.width === 0 ? "default" : "full"}
-        variant="destructive"
-        disabled={wallets.length === 0}
-      >
-        Delete all Wallets
-      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+        <Button
+          size={screenSize.width > 500 || screenSize.width === 0 ? "default" : "full"}
+          variant="destructive"
+          disabled={wallets.length === 0}
+          onClick={handleDeleteAllWallets}
+        >
+          Delete all Wallets
+        </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are you sure you want to delete all wallets?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently
+              delete your wallets from local storage.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAllWallets}
+              className="text-destructive"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
