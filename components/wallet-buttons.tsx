@@ -51,6 +51,12 @@ export function WalletButtons() {
     [BlockchainType.SOL, setSolWalletsCount],
   ])
 
+  const blockchainTypeToLocalStorageWalletsCountKey: Map<BlockchainType, string> = new Map([
+    [BlockchainType.BTC, 'btcWalletsCount'],
+    [BlockchainType.ETH, 'ethWalletsCount'],
+    [BlockchainType.SOL, 'solWalletsCount'],
+  ])
+
   const getDerivationPath = (blockchainType: BlockchainType, count: number) => {
     if (blockchainType === BlockchainType.BTC) {
       return `m/44'/0'/${count}'/0'`
@@ -68,8 +74,9 @@ export function WalletButtons() {
     const derivationPath = getDerivationPath(selectedType, count ?? 0)
 
     if (setCountFn && derivationPath) {
-      const updatedWallets = [...wallets, generateWallet(mnemonics, derivationPath, selectedType)]
+      const updatedWallets = [...wallets, generateWallet(mnemonics, derivationPath, selectedType, count ?? 0)]
       localStorage.setItem('wallets', JSON.stringify(updatedWallets))
+      localStorage.setItem(blockchainTypeToLocalStorageWalletsCountKey.get(selectedType) ?? '', ((count ?? 0) + 1).toString())
       setWallets(updatedWallets)
       setCountFn((count) => count + 1)
     } else {
@@ -80,6 +87,12 @@ export function WalletButtons() {
 
   const handleDeleteAllWallets = () => {
     localStorage.setItem('wallets', '')
+    localStorage.setItem('btcWalletsCount', '0')
+    localStorage.setItem('ethWalletsCount', '0')
+    localStorage.setItem('solWalletsCount', '0')
+    setBtcWalletsCount(0)
+    setEthWalletsCount(0)
+    setSolWalletsCount(0)
     setWallets([])
   }
 
@@ -87,6 +100,22 @@ export function WalletButtons() {
     const storedWallets = localStorage.getItem('wallets')
     if (storedWallets && storedWallets !== '') {
       setWallets(JSON.parse(storedWallets))
+    }
+
+    const storedBtcWalletsCount = localStorage.getItem('btcWalletsCount');
+    const storedEthWalletsCount = localStorage.getItem('ethWalletsCount');
+    const storedSolWalletsCount = localStorage.getItem('solWalletsCount');
+
+    if (storedBtcWalletsCount !== null) {
+      setBtcWalletsCount(Number(storedBtcWalletsCount));
+    }
+
+    if (storedEthWalletsCount !== null) {
+      setEthWalletsCount(Number(storedEthWalletsCount));
+    }
+
+    if (storedSolWalletsCount !== null) {
+      setSolWalletsCount(Number(storedSolWalletsCount));
     }
   }, [])
 
@@ -112,7 +141,6 @@ export function WalletButtons() {
           size={screenSize.width > 500 || screenSize.width === 0 ? "default" : "full"}
           variant="destructive"
           disabled={wallets.length === 0}
-          onClick={handleDeleteAllWallets}
         >
           Delete all Wallets
         </Button>

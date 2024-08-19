@@ -27,12 +27,14 @@ export function Mnemonics() {
   const generateMnemonics = () => {
     const mnemonicsString = generateMnemonic(128)
     localStorage.setItem('mnemonics', mnemonicsString)
+    toast('Mnemonics generated.')
     setMnemonics(mnemonicsString)
   }
 
   const regenerateMnemonics = () => {
     const mnemonicsString = generateMnemonic(128)
     localStorage.setItem('mnemonics', mnemonicsString)
+    toast('Mnemonics successfully re-generated.')
     setMnemonics(mnemonicsString)
   }
 

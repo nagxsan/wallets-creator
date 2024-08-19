@@ -3,6 +3,7 @@ import { atom, RecoilState } from "recoil";
 
 export interface Wallets {
   id: string,
+  name: string,
   publicKey: string,
   privateKey: string,
   blockchainType: BlockchainType
