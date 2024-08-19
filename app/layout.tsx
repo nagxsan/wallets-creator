@@ -9,6 +9,20 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Wallets Creator",
   description: "Create wallets on the go!",
+  icons: [
+    {
+      rel: "icon",
+      type: "image/png",
+      url: "/wallet-minimal-light.png",
+      media: "(prefers-color-scheme: light)",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      url: "/wallet-minimal-dark.png",
+      media: "(prefers-color-scheme: dark)",
+    },
+  ],
 };
 
 export default function RootLayout({
