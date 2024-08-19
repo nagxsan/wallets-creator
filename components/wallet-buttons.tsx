@@ -123,7 +123,7 @@ export function WalletButtons() {
     <div className="flex items-center gap-x-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="default">Add Wallet</Button>
+          <Button variant="default" disabled={mnemonics === ''}>Add Wallet</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>Choose blockchain type</DropdownMenuLabel>
