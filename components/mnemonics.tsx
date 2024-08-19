@@ -1,4 +1,4 @@
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { Button } from "./ui/button";
 import { mnemonicsAtom } from "@/store/atoms/mnemonics";
 import { generateMnemonic } from "bip39";
@@ -8,10 +8,12 @@ import { Badge } from "./ui/badge";
 import { Copy } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 import { toast } from "sonner";
+import { walletsAtom } from "@/store/atoms/wallets";
 
 export function Mnemonics() {
 
   const [mnemonics, setMnemonics] = useRecoilState(mnemonicsAtom)
+  const wallets = useRecoilValue(walletsAtom)
 
   const screenSize = useScreenSize()
 
@@ -28,6 +30,12 @@ export function Mnemonics() {
     setMnemonics(mnemonicsString)
   }
 
+  const regenerateMnemonics = () => {
+    const mnemonicsString = generateMnemonic(128)
+    localStorage.setItem('mnemonics', mnemonicsString)
+    setMnemonics(mnemonicsString)
+  }
+
   return (
     <div className="flex flex-col gap-y-4">
       <div className="text-3xl xsm:text-4xl font-extrabold text-primary">
@@ -37,9 +45,23 @@ export function Mnemonics() {
         You will need this 12 letter phrase to generate wallets. Save this phrase in a safe place. If you lose this, you will never be able to recover your wallets.
       </div>
       {
-        mnemonics.length === 0 && (
+        mnemonics.length === 0 
+        ?
+        (
           <div>
             <Button onClick={generateMnemonics} size={screenSize.width > 500 || screenSize.width === 0 ? "default" : "full"}>Generate Secret Phrase</Button>
+          </div>
+        )
+        :
+        (
+          <div>
+            <Button
+              onClick={regenerateMnemonics}
+              size={screenSize.width > 500 || screenSize.width === 0 ? "default" : "full"}
+              disabled={wallets.length > 0 ? true : false}
+            >
+              Re-Generate Mnemonics
+            </Button>
           </div>
         )
       }
